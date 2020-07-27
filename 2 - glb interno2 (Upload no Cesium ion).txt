@@ -1,0 +1,42 @@
+// Grant CesiumJS access to your ion assets
+Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyN2NhZjFjYS02NjdiLTQ3NTEtODA5YS1kMTM3OTIzMDM1NjAiLCJpZCI6MzEzMjUsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1OTUyNjUwMTl9.WD46DhJ5zR913LhNd8aTQmp16yZdem-5UUKTXWFtYLI";
+
+var viewer = new Cesium.Viewer("cesiumContainer", {
+  infoBox: false,
+  selectionIndicator: false,
+  shadows: true,
+  shouldAnimate: true,
+});
+
+var tileset = viewer.scene.primitives.add(
+  new Cesium.Cesium3DTileset({
+    
+    url: Cesium.IonResource.fromAssetId(125113),
+    //This tileset doesn't have a location, so we're using a modelMatrix to place it at 0, 0 instead of drawing at the center of the earth
+    
+    
+    modelMatrix: Cesium.Transforms.eastNorthUpToFixedFrame(
+      Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706,0.0)
+    ),
+    
+    
+  })
+);
+
+tileset.readyPromise
+  .then(function () {
+    viewer.zoomTo(tileset);
+
+    // Apply the default style if it exists
+    var extras = tileset.asset.extras;
+    if (
+      Cesium.defined(extras) &&
+      Cesium.defined(extras.ion) &&
+      Cesium.defined(extras.ion.defaultStyle)
+    ) {
+      tileset.style = new Cesium.Cesium3DTileStyle(extras.ion.defaultStyle);
+    }
+  })
+  .otherwise(function (error) {
+    console.log(error);
+  });

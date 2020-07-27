@@ -1,0 +1,68 @@
+// Grant CesiumJS access to your ion assets
+Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyN2NhZjFjYS02NjdiLTQ3NTEtODA5YS1kMTM3OTIzMDM1NjAiLCJpZCI6MzEzMjUsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1OTUyNjUwMTl9.WD46DhJ5zR913LhNd8aTQmp16yZdem-5UUKTXWFtYLI";
+
+var viewer = new Cesium.Viewer("cesiumContainer", {
+  infoBox: false,
+  selectionIndicator: false,
+  shadows: true,
+  shouldAnimate: true,
+});
+
+function createModel(url, height) {
+  viewer.entities.removeAll();
+
+  var position = Cesium.Cartesian3.fromDegrees(
+    -123.0744619,
+    44.0503706,
+    height
+  );
+  var heading = Cesium.Math.toRadians(135);
+  var pitch = 0;
+  var roll = 0;
+  var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+  var orientation = Cesium.Transforms.headingPitchRollQuaternion(
+    position,
+    hpr
+  );
+
+  var entity = viewer.entities.add({
+    name: url,
+    position: position,
+    orientation: orientation,
+    model: {
+      uri: url,
+      minimumPixelSize: 128,
+      maximumScale: 20000,
+    },
+  });
+  viewer.trackedEntity = entity;
+}
+
+var options = [
+  {
+    text: "Aircraft",
+    onselect: function () {
+      createModel(
+        "../SampleData/models/CesiumAir/Cesium_Air.glb",
+        4000.0
+      );
+    },
+  },
+];
+
+Sandcastle.addToolbarMenu(options);
+
+var tileset = viewer.scene.primitives.add(
+  new Cesium.Cesium3DTileset({
+    
+    url: Cesium.IonResource.fromAssetId(125113),
+    //This tileset doesn't have a location, so we're using a modelMatrix to place it at 0, 0 instead of drawing at the center of the earth
+    
+    
+    modelMatrix: Cesium.Transforms.eastNorthUpToFixedFrame(
+      Cesium.Cartesian3.fromDegrees(-123.0744700, 44.0503706,0.0)
+    ),
+    
+    
+  })
+);
