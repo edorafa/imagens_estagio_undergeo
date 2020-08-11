@@ -1,1 +1,1 @@
-Arquivos GLB para testes, disponíveis o site: https://www.cgtrader.com/
+Arquivos GLB para testes, disponíveis no site: https://www.cgtrader.com/
