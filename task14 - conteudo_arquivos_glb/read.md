@@ -1,6 +1,6 @@
-# Installation!
+# Instalação!
 
-This code requires pygltflib.
+Esse código requer pygltflib.
 
 ```sh
 pip install pygltflib
