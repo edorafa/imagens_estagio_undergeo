@@ -1,0 +1,54 @@
+// Grant CesiumJS access to your ion assets
+Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyN2NhZjFjYS02NjdiLTQ3NTEtODA5YS1kMTM3OTIzMDM1NjAiLCJpZCI6MzEzMjUsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1OTUyNjUwMTl9.WD46DhJ5zR913LhNd8aTQmp16yZdem-5UUKTXWFtYLI";
+
+var viewer = new Cesium.Viewer("cesiumContainer", {
+  infoBox: false,
+  selectionIndicator: false,
+  shadows: true,
+  shouldAnimate: true,
+});
+
+var tileset = viewer.scene.primitives.add(
+  new Cesium.Cesium3DTileset({
+    url: Cesium.IonResource.fromAssetId(125113),
+  })
+);
+
+function createModel() {
+  viewer.entities.removeAll();
+
+  var position = Cesium.Cartesian3.fromDegrees(
+    -47.4722319284,
+    -18.8043699245,
+    0
+  );
+  var heading = Cesium.Math.toRadians(135);
+  var pitch = 0;
+  var roll = 0;
+  var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+  var orientation = Cesium.Transforms.headingPitchRollQuaternion(
+    position,
+    hpr
+  );
+
+  var entity = viewer.entities.add({
+    position: position,
+    orientation: orientation,
+    model: {
+      minimumPixelSize: 128,
+      maximumScale: 20000,
+    },
+  });
+  viewer.trackedEntity = entity;
+}
+
+var options = [
+  {
+    text: "PvGrid",
+    onselect: function () {
+      createModel();
+    },
+  },
+];
+
+Sandcastle.addToolbarMenu(options);
