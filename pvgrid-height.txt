@@ -1,0 +1,69 @@
+// Grant CesiumJS access to your ion assets
+Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNzE3Y2M3OC1jZmY5LTRlNTktOTExNi02Zjg1ZTlkNjYzNzYiLCJpZCI6MzM0MjYsImlhdCI6MTU5ODYxNjA5Nn0.04jgRhzI9NYCTzCN8CnT2V_B9CLmMCXHvFOetfdVzXs";
+
+var viewer = new Cesium.Viewer("cesiumContainer", {
+  infoBox: false,
+  selectionIndicator: false,
+  shadows: true,
+  shouldAnimate: true,
+});
+
+  var tileset = viewer.scene.primitives.add(
+  new Cesium.Cesium3DTileset({
+    url: Cesium.IonResource.fromAssetId(159048),
+  })
+);
+
+function createModel() {
+  viewer.entities.removeAll();
+
+  var position = Cesium.Cartesian3.fromDegrees(
+    -47.4722319284,
+    -18.8043699245,
+    
+  );
+  var heading = Cesium.Math.toRadians(135);
+  var pitch = 0;
+  var roll = 0;
+  var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+  var orientation = Cesium.Transforms.headingPitchRollQuaternion(
+    position,
+    hpr
+  );
+
+  var entity = viewer.entities.add({
+    position: position,
+    orientation: orientation,
+    model: {
+      minimumPixelSize: 128,
+      maximumScale: 20000,
+    },
+  });
+  viewer.trackedEntity = entity;
+}
+
+var options = [
+  {
+    text: "PvGrid",
+    onselect: function () {
+      createModel();
+    },
+  },
+];
+
+var heightOffset = -650;
+
+tileset.readyPromise.then(function(tileset) {
+    var boundingSphere = tileset.boundingSphere;
+    // Position tileset
+    var cartographic = Cesium.Cartographic.fromCartesian(boundingSphere.center);
+    var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0.0);
+    var offset = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, heightOffset);
+    var translation = Cesium.Cartesian3.subtract(offset, surface, new Cesium.Cartesian3());
+    tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
+  
+    console.log(tileset.modelMatrix);
+
+});
+
+Sandcastle.addToolbarMenu(options);
